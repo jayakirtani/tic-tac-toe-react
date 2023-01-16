@@ -1,21 +1,15 @@
-import { useState } from "react";
 import Square from "./Square.js";
 
-export default function Board() {
-  const [isXNext, setIsXNext] = useState(true);
-  const [squares, setSquares] = useState(Array(9).fill(""));
-
+export default function Board({ squares, onPlay, isXNext }) {
   function handleClick(position) {
     // Do nothing when position is already filled
     // or winner has been declared
     if (squares[position] || calculateWinner(squares)) {
       return;
     }
-
     const updatedSquares = [...squares];
     updatedSquares[position] = isXNext ? "X" : "O";
-    setSquares(updatedSquares);
-    setIsXNext((n) => !n);
+    onPlay(updatedSquares);
   }
 
   const winner = calculateWinner(squares);
@@ -57,7 +51,7 @@ function calculateWinner(squares) {
     [1, 4, 7],
     [2, 5, 8],
     [0, 4, 8],
-    [2, 4, 6]
+    [2, 4, 6],
   ];
 
   for (let possibility of winnerpossibilities) {
