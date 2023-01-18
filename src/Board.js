@@ -27,13 +27,14 @@ export default function Board({ squares, onPlay, isXNext }) {
         .fill("")
         .map((c, i) => {
           return (
-            <div className="board-row">
+            <div className="board-row" key={i}>
               {Array(3)
                 .fill()
                 .map((c, j) => {
                   const pos = i * 3 + j;
                   return (
                     <Square
+                      key={pos}
                       value={squares[pos]}
                       onClick={() => handleClick(pos)}
                     />
