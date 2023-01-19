@@ -13,9 +13,12 @@ export default function Board({ squares, onPlay, isXNext }) {
   }
 
   const winner = calculateWinner(squares);
+  const allFilled = checkifAllFilled(squares);
   let status;
   if (winner) {
-    status = "Winner: " + winner;
+    status = "Winner: " + winner.player;
+  } else if (allFilled) {
+    status = "Game Draw";
   } else {
     status = "Next player: " + (isXNext ? "X" : "O");
   }
@@ -35,6 +38,7 @@ export default function Board({ squares, onPlay, isXNext }) {
                   return (
                     <Square
                       key={pos}
+                      highlight={winner?.pos.includes(pos)}
                       value={squares[pos]}
                       onClick={() => handleClick(pos)}
                     />
@@ -66,8 +70,20 @@ function calculateWinner(squares) {
       squares[pos1] === squares[pos2] &&
       squares[pos1] === squares[pos3]
     ) {
-      return squares[pos1];
+      return {
+        player: squares[pos1],
+        pos: possibility,
+      };
     }
   }
   return null;
+}
+
+function checkifAllFilled(squares) {
+  for (let square of squares) {
+    if (square === "") {
+      return false;
+    }
+  }
+  return true;
 }
