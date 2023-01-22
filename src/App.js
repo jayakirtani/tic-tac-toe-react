@@ -2,7 +2,12 @@ import { useState } from "react";
 import Board from "./Board.js";
 
 export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill("")]);
+  const [history, setHistory] = useState([
+    {
+      data: Array(9).fill(""),
+      pos: "",
+    },
+  ]);
   const [currentMove, setCurrentMove] = useState(0);
   const [toggle, setToggle] = useState(false);
   const isXNext = currentMove % 2 === 0;
@@ -11,8 +16,11 @@ export default function Game() {
     setToggle((t) => !t);
   }
 
-  function handlePlay(squares) {
-    const nextHistory = [...history.slice(0, currentMove + 1), squares];
+  function handlePlay(squares, position) {
+    const nextHistory = [
+      ...history.slice(0, currentMove + 1),
+      { data: squares, pos: position },
+    ];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
   }
@@ -21,7 +29,7 @@ export default function Game() {
     <div className="game">
       <div className="game-board">
         <Board
-          squares={history[currentMove]}
+          squares={history[currentMove].data}
           isXNext={isXNext}
           onPlay={handlePlay}
         />
@@ -35,16 +43,17 @@ export default function Game() {
           const move = toggle
             ? history.length - 1 - originalMove
             : originalMove;
+          const colRow = `${parseInt(squares.pos / 3)}, ${squares.pos % 3}`;
           return (
             <div>
               {move === currentMove ? (
-                `You are at move ${move}`
+                `You are at move #${move} (${colRow})`
               ) : (
                 <button
                   key={`move${move}`}
                   onClick={() => setCurrentMove(move)}
                 >
-                  {move === 0 ? "Go to start" : `Jump To #${move}`}
+                  {move === 0 ? "Go to start" : `Jump To #${move} (${colRow})`}
                 </button>
               )}
             </div>

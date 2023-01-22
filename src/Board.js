@@ -10,7 +10,7 @@ export default function Board({ squares, onPlay, isXNext }) {
     }
     const updatedSquares = [...squares];
     updatedSquares[position] = isXNext ? "X" : "O";
-    onPlay(updatedSquares);
+    onPlay(updatedSquares, position);
   }
 
   const winner = calculateWinner(squares);
