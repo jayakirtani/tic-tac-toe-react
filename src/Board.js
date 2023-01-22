@@ -1,4 +1,5 @@
 import Square from "./Square.js";
+import { calculateWinner, checkifAllFilled } from "./utils.js";
 
 export default function Board({ squares, onPlay, isXNext }) {
   function handleClick(position) {
@@ -9,13 +10,16 @@ export default function Board({ squares, onPlay, isXNext }) {
     }
     const updatedSquares = [...squares];
     updatedSquares[position] = isXNext ? "X" : "O";
-    onPlay(updatedSquares);
+    onPlay(updatedSquares, position);
   }
 
   const winner = calculateWinner(squares);
+  const allFilled = checkifAllFilled(squares);
   let status;
   if (winner) {
-    status = "Winner: " + winner;
+    status = "Winner: " + winner.player;
+  } else if (allFilled) {
+    status = "Game Draw";
   } else {
     status = "Next player: " + (isXNext ? "X" : "O");
   }
@@ -23,46 +27,27 @@ export default function Board({ squares, onPlay, isXNext }) {
   return (
     <>
       <div className="status">{status}</div>
-      <div className="board-row">
-        <Square value={squares[0]} onClick={() => handleClick(0)} />
-        <Square value={squares[1]} onClick={() => handleClick(1)} />
-        <Square value={squares[2]} onClick={() => handleClick(2)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[3]} onClick={() => handleClick(3)} />
-        <Square value={squares[4]} onClick={() => handleClick(4)} />
-        <Square value={squares[5]} onClick={() => handleClick(5)} />
-      </div>
-      <div className="board-row">
-        <Square value={squares[6]} onClick={() => handleClick(6)} />
-        <Square value={squares[7]} onClick={() => handleClick(7)} />
-        <Square value={squares[8]} onClick={() => handleClick(8)} />
-      </div>
+      {Array(3)
+        .fill("")
+        .map((c, i) => {
+          return (
+            <div className="board-row" key={i}>
+              {Array(3)
+                .fill()
+                .map((c, j) => {
+                  const pos = i * 3 + j;
+                  return (
+                    <Square
+                      key={pos}
+                      highlight={winner?.pos.includes(pos)}
+                      value={squares[pos]}
+                      onClick={() => handleClick(pos)}
+                    />
+                  );
+                })}
+            </div>
+          );
+        })}
     </>
   );
-}
-
-function calculateWinner(squares) {
-  const winnerpossibilities = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-
-  for (let possibility of winnerpossibilities) {
-    const [pos1, pos2, pos3] = possibility;
-    if (
-      squares[pos1] &&
-      squares[pos1] === squares[pos2] &&
-      squares[pos1] === squares[pos3]
-    ) {
-      return squares[pos1];
-    }
-  }
-  return null;
 }
